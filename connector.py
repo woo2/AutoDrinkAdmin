@@ -54,7 +54,7 @@ def user_info(ibutton):
     response = requests.get(drink_url % 'users/info' + "&ibutton=%s" % ibutton, verify=False)
     print(response.text)
     print(response.json)
-    response = response.json
+    response = response.json()
     print("\niButton present. getting json\n")
     try:
         return (response['data']['uid'],
@@ -68,7 +68,7 @@ def increment_credits(uid, credits):
     Updates the given user's drink credits and returns the user's new credits
     """
     data = {'uid': uid, 'value': credits, 'type': 'add'}
-    response = requests.post(drink_url % 'users/credits', data = data, verify=False).json
+    response = requests.post(drink_url % 'users/credits', data = data, verify=False).json()
     logging(str(response))
     try:
         with open(money_log, 'r') as f:
