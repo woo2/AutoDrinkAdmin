@@ -52,9 +52,13 @@ def user_info(ibutton):
     Gets the information about a user given their ibutton
     """
     response = requests.get(drink_url % 'users/info' + "&ibutton=%s" % ibutton, verify=False).json
-    return (response['data']['uid'],
+    print("\niButton present. getting json\n")
+    try:
+        return (response['data']['uid'],
             int(response['data']['credits']),
             response['data']['admin'] == '1')
+    except Exception as e:
+        print(e)
 
 def increment_credits(uid, credits):
     """
