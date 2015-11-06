@@ -42,6 +42,7 @@ class CommThread(Thread):
         self.config_file = config_file_name
         Thread.__init__(self)
         self.start()
+        requests.packages.urllib3.disable_warnings()
 
     def new_user(self):
         """
