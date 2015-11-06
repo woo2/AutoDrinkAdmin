@@ -51,7 +51,10 @@ def user_info(ibutton):
     """
     Gets the information about a user given their ibutton
     """
-    response = requests.get(drink_url % 'users/info' + "&ibutton=%s" % ibutton, verify=False).json
+    response = requests.get(drink_url % 'users/info' + "&ibutton=%s" % ibutton, verify=False)
+    print(response.data)
+    print(response.json)
+    response = response.json
     print("\niButton present. getting json\n")
     try:
         return (response['data']['uid'],
