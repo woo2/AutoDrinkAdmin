@@ -26,7 +26,7 @@ def heart_beat(self):
     cut and everything is rebooted, the readers will not start taking money intil
     the computer is ready to process the money.
     """
-    while True:
+    while False:
         self.ser.write("h")
         time.sleep(1)
 
