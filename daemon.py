@@ -142,6 +142,7 @@ class CommThread(Thread):
 
                 connector.logging('Input: input from arduino: %s' % data)
                 if data_code == 'I': # iButton input
+                    last_money_time = datetime.now()
                     # money is still be counted
                     if datetime.now() - last_money_time < timedelta(seconds = 3):
                         wx.CallAfter(self.append_log, "Please wait a second...")
