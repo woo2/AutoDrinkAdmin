@@ -29,7 +29,7 @@ class AdminPopup(wx.PopupWindow):
         reg_font = wx.Font(22, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 
         width, height = wx.DisplaySize()
-        self.SetSize((width * .9, height * .9))
+        self.SetSize((width * .7, height * .9))
         wx.CallAfter(self.Refresh)
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.admin_title = wx.StaticText(panel, -1, "Admin Panel", style=wx.ALIGN_CENTER)
