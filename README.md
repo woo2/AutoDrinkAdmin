@@ -24,3 +24,28 @@ information and update user's credits. This also deals with all the logging.
 - configParser
 - pyserial 
 - requests
+- python-ldap
+
+On rasbian, wxPython is provided by `python-wxgtk3.0` and the others are avaliable as-is on pip.
+
+## System Setup
+
+These commands will install dependencies:
+``` bash
+$ sudo apt-get install ntpdate python-dev libsasl2-dev python-dev libldap2-dev libssl-dev python-wxgtk3.0
+$ sudo svstemctl disable ntpd && sudo systemctl stop ntpd
+$ sudo ntpdate 
+$ sudo pip install --upgrade python-ldap configParser pyserial requests
+```
+
+Next, the touch screen needs to be set up. It is not recomended to build from source. xinput_calibrator requires a specific version of gcc that is no longer distributed.
+```bash
+$ sudo dpkg -i xinput-calibrator_0.7.5+git20140201-1+b1_armhf.deb
+```
+I'm going to assume you've already cloned this repo.
+
+Now, we should be ready to go.
+``` bash
+$ cd AutoDrinkAdmin
+$ ./launcher
+```
