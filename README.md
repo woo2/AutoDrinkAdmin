@@ -38,7 +38,8 @@ $ sudo ntpdate
 $ sudo pip install --upgrade python-ldap configParser pyserial requests
 ```
 
-Next, the touch screen needs to be set up. It is not recomended to build from source. xinput_calibrator requires a specific version of gcc that is no longer distributed.
+Next, the touch screen needs to be set up. ~~It is not recomended to build from source. xinput_calibrator requires a specific version of gcc that is no longer distributed.~~ The .deb I have for the calibrator needs gcc >= 5.2, which is not avaliable on rasbian.. I am going to try to build xinput to see if I can use an older gcc.
+
 ```bash
 $ sudo dpkg -i xinput-calibrator_0.7.5+git20140201-1+b1_armhf.deb
 ```
