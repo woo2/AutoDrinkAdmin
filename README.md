@@ -30,23 +30,46 @@ On rasbian, wxPython is provided by `python-wxgtk3.0` and the others are avaliab
 
 ## System Setup
 
-These commands will install dependencies:
+These commands will install dependencies and other needed tools:
 ``` bash
-$ sudo apt-get install ntpdate python-dev libsasl2-dev python-dev libldap2-dev libssl-dev python-wxgtk3.0
+$ sudo apt-get install vim ntpdate arduino matchbox-keyboard
+$ sudo apt-get install python-dev libsasl2-dev python-dev libldap2-dev libssl-dev python-wxgtk3.0 libcanberra-gtk-module
+$ sudo apt-get install --no-install-recommends packagekit-gtk3-module #gnome and all of its tools are reccomened 
 $ sudo svstemctl disable ntpd && sudo systemctl stop ntpd
 $ sudo ntpdate 
 $ sudo pip install --upgrade python-ldap configParser pyserial requests
 ```
 
-Next, the touch screen needs to be set up. ~~It is not recomended to build from source. xinput_calibrator requires a specific version of gcc that is no longer distributed.~~ The .deb I have for the calibrator needs gcc >= 5.2, which is not avaliable on rasbian.. I am going to try to build xinput to see if I can use an older gcc.
+####Build xinput_calibrator
 
+Install xinput_calibrator dependencies and build tools
 ```bash
-$ sudo dpkg -i xinput-calibrator_0.7.5+git20140201-1+b1_armhf.deb
+$ sudo apt-get install dh-autoreconf libx11-dev libxi-dev x11proto-input-dev
 ```
-I'm going to assume you've already cloned this repo.
 
-Now, we should be ready to go.
+Clone xinput_calibrator and build. Only use 3 cores because it doesn't take that long and the pi is slow.
+```bash
+$ git clone https://github.com/tias/xinput_calibrator.git
+$ cd xinput_calibrator
+$ ./autoconf.sh
+$ make -j3 
+$ sudo make install
+$ DISPLAY=:0.0 xinput_calibrator
+```
+####Making the calibration permenant
+
+Copy the "Section ... End Section" from the output and put it in a file at `/etc/X11/xorg.conf.d/99-calibration.conf`, delete whatever is there already, and restart.
+
+
+####Running the GUI on Startup
+
+
+####Test the GUI once 
+First, make sure that the Arduino is mounted at the correct devive name, `ACM0`. 
 ``` bash
+$ arduino
+```
+
 $ cd AutoDrinkAdmin
 $ ./launcher
 ```
