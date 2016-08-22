@@ -1,0 +1,7 @@
+[connector]
+moneyLog = log.txt
+apikey = 1234567890
+[daemon]
+#timeout is seconds
+timeout = 180
+port = /dev/ttyACM0
