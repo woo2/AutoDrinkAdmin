@@ -9,7 +9,7 @@ Author:
 """
 
 from threading import Thread
-from wx.lib.pubsub import Publisher
+from wx.lib.pubsub import pub as Publisher
 from datetime import datetime, timedelta
 import wx
 import time
@@ -55,8 +55,7 @@ class CommThread(Thread):
                     self.current_ibutton)
             self.logged_in = True
             self.ser.write('a')
-            Publisher.sendMessage('updateNewUser',
-                    (self.user_id, drink_credits, admin_status))
+            Publisher.sendMessage('updateNewUser', message=(self.user_id, drink_credits, admin_status))
         except Exception as e:
             connector.logging('Exception getting new user information', e = e)
             wx.CallAfter(self.append_log,
@@ -70,10 +69,10 @@ class CommThread(Thread):
         Parameters:
             message: the log message to add to the gui
         """
-        Publisher.sendMessage("appendLog", message)
+        Publisher.sendMessage("appendLog",message=message)
 
     def append_money(self, message):
-        Publisher.sendMessage("appendMoney", message)
+        Publisher.sendMessage("appendMoney",message=message)
 
     def money_added(self, amount, new_amount):
         """
@@ -86,7 +85,7 @@ class CommThread(Thread):
             new_amount: the new amount of credits that the user has
         """
         Publisher.sendMessage("updateMoneyAdded",
-                (new_amount, "Added %d drink credits to %s's account" % (amount, self.user_id)))
+                message=(new_amount, "Added %d drink credits to %s's account" % (amount, self.user_id)))
 
     def logout_button(self):
         """

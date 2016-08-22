@@ -8,7 +8,7 @@ Author:
     JD <jd@csh.rit.edu>
 """
 import wx
-from wx.lib.pubsub import Publisher
+from wx.lib.pubsub import pub as Publisher
 import argparse
 import daemon
 import ConfigParser
@@ -132,11 +132,11 @@ class GUI(wx.Frame):
         self.panel.SetSizerAndFit(self.sizer)
         self.money_text.Layout()
 
-        Publisher().subscribe(self.append_log, "appendLog")
-        Publisher().subscribe(self.append_money, "appendMoney")
-        Publisher().subscribe(self.update_logout, "updateLogout")
-        Publisher().subscribe(self.new_user, "updateNewUser")
-        Publisher().subscribe(self.money_added, "updateMoneyAdded")
+        Publisher.subscribe(self.append_log, "appendLog")
+        Publisher.subscribe(self.append_money, "appendMoney")
+        Publisher.subscribe(self.update_logout, "updateLogout")
+        Publisher.subscribe(self.new_user, "updateNewUser")
+        Publisher.subscribe(self.money_added, "updateMoneyAdded")
 
         config = ConfigParser.ConfigParser()
         config.read(config_file)
@@ -172,21 +172,21 @@ class GUI(wx.Frame):
         Parameters:
             message: the message to add to the log
         """
-        self.log_text.SetLabel("Log:\n- " + message.data +
+        self.log_text.SetLabel("Log:\n- " + message +
                 self.log_text.GetLabel()[4:])
 
     def append_money(self, message):
-        self.money_text.SetLabel("Money:\n- " + message.data +
+        self.money_text.SetLabel("Money:\n- " + message +
                 self.money_text.GetLabel()[6:])
 
-    def new_user(self, t):
+    def new_user(self, message):
         """
         Used when the background thread gets a new user to log in. This is used to
             clear the screen and display the new user's information
         Parameters:
-            t: the tuple of the new user's data, (user's id , user's credits)
+            message: the tuple of the new user's data, (user's id , user's credits)
         """
-        tup = t.data
+        tup = message
         self.user_text.SetLabel("    User: " + tup[0])
         self.credits_text.SetLabel("Credits: " + str(tup[1]))
         self.admin_but.Show(tup[2])
@@ -194,19 +194,19 @@ class GUI(wx.Frame):
         self.log_text.SetLabel("Log:\n- " + tup[0] +
                 " has successfully been logged in")
 
-    def money_added(self, t):
+    def money_added(self, message):
         """
         Used when the background thread has added money to the user's account and
             wants to display it on the GUI.
         Parameters:
-            t: the tuple of the data, (user's new credits , message log)
+            message: the tuple of the data, (user's new credits , message log)
         """
-        tup = t.data
+        tup = message
         self.credits_text.SetLabel("Credits: " + str(tup[0]))
         self.log_text.SetLabel("Log:\n- " + tup[1] + self.log_text.GetLabel()[4:])
         self.money_text.SetLabel("Money:")
 
-    def update_logout(self, n=None):
+    def update_logout(self):
         """
         Used when the background thread has logged the current user
             out and wants to wipe the screen of the user's information
@@ -228,10 +228,9 @@ if __name__ == "__main__":
     parser.add_argument('--config', type=str, help='The config file to use',
             default='config')
     args = parser.parse_args()
-    app = wx.PySimpleApp()
+    app = wx.App(False)
     if not os.path.exists(args.config):
         print('Error: No Config File')
     else:
         frame = GUI(args.config).Show()
         app.MainLoop()
-
