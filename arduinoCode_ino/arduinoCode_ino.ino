@@ -1,11 +1,9 @@
-#include <OneWire.h>
+#include "OneWire.h"
 #define IBUTTON_ID_SIZE 8
 
 OneWire ds(4); // One Wire for iButton on pin 4
 
 unsigned long int time;             // the current time unit
-unsigned long timeOfLastPulseCoins; // the time of the last pulse from the coin reader
-unsigned long timeOfLastPulseBills; // the time of the last pulse from the bill reader
 unsigned long heartBeat;            // the time of the last heart beat from the laptop to make sure the computer is still active
 volatile int coinsValue;            // the amount of money from the coin reader
 volatile int billsValue;            // the amount of money from the bill reader
@@ -13,26 +11,26 @@ volatile int coinsChange;           // 1 if the coin reader has had input, 0 oth
 volatile int billsChange;           // 1 if the bill reader has had input, 0 otherwise
 String result;                      // result from the iButton reader
 byte ibutton_id[IBUTTON_ID_SIZE];   // data to hold the iButton ID
-volatile unsigned long highTime;    // the time of a high pulse from the coin reader
-volatile unsigned long lowTime;     // the time of a low pulse from the bill reader
-int coinReader = 2;                 // the pin for the coin reader 
+volatile unsigned long coinPulseLast;    // the time of a high pulse from the coin reader
+volatile unsigned long billPulseLast;     // the time of a low pulse from the bill reader
+int coinReader = 19;                 // the pin for the coin reader 
 int billReader = 3;                 // the pin for the bill reader
+int inhibitor = 7;
 
 void setup()
 {
-  timeOfLastPulseCoins = millis();
-  timeOfLastPulseBills = millis();
   heartBeat = millis();
   coinsChange = 0;
   coinsValue = 0;
   Serial.begin(9600);
   pinMode(9,OUTPUT);
-  pinMode(7,OUTPUT); // the pin used for the inhibiter
+  pinMode(inhibitor,OUTPUT); // the pin used for the inhibiter
   delay(500);
   digitalWrite(9, LOW);
-  attachInterrupt(0, coinInserted, CHANGE);
+  //see https://www.arduino.cc/en/Reference/AttachInterrupt for pin to interrupt mapping
+  attachInterrupt(4, coinInserted, CHANGE);
   attachInterrupt(1, billInserted, CHANGE);
-  digitalWrite(3, HIGH); // bill reader
+  digitalWrite(billReader, HIGH); // bill reader
 }
 
 /*
@@ -41,12 +39,11 @@ void setup()
  */
 void coinInserted() {
   if (digitalRead( coinReader ) == HIGH) {
-    highTime = millis(); //get time of pulse going HIGH
+    coinPulseLast = millis(); //get time of pulse going HIGH
    } else { 
-     if (millis() - highTime < 150 && millis() - highTime > 20) { // if the pulse width was less than 150, so no start up pulses
+     if (millis() - coinPulseLast > 20) {
       coinsValue++;
       coinsChange = 1;
-      timeOfLastPulseCoins = millis();
     }
   }
 }
@@ -59,12 +56,11 @@ void billInserted() {
 //  billsChange = 1;
 //  timeOfLastPulseBills = millis();
   if (digitalRead( billReader ) == LOW) {
-    lowTime = millis();
+    billPulseLast = millis();
   } else {
-    if (millis() - lowTime < 150) {
+    if (millis() - billPulseLast < 150) {
       billsValue++;
       billsChange = 1;
-      timeOfLastPulseBills = millis();
     }
   }
 }
@@ -73,14 +69,14 @@ void billInserted() {
  * Sends the command to the readers to stop accepting money
  */
 void inhibitReaders() {
-  digitalWrite(7, LOW);
+  digitalWrite(inhibitor, LOW);
 }
 
 /*
  * Sends the command to the readers to start accepting money
  */
 void startReaders() {
-  digitalWrite(7, HIGH);
+  digitalWrite(inhibitor, HIGH);
 }
 
 void loop()
@@ -99,7 +95,7 @@ void loop()
   }
 
   if (millis() - heartBeat > 5000) {
-    inhibitReaders();
+    //inhibitReaders();
   }
   // clears & initialzes the iButton buffer
   for (int i = 0 ; i < IBUTTON_ID_SIZE ; i++) {
