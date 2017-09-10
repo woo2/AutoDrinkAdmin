@@ -40,7 +40,7 @@ $ sudo ntpdate
 $ sudo pip install --upgrade python-ldap configParser pyserial requests
 ```
 
-####Build xinput_calibrator
+#### Build xinput_calibrator
 
 Install xinput_calibrator dependencies and build tools
 ```bash
@@ -56,15 +56,15 @@ $ make -j3
 $ sudo make install
 $ DISPLAY=:0.0 xinput_calibrator
 ```
-####Making the calibration permenant
+#### Making the calibration permenant
 
 Copy the "Section ... End Section" from the output and put it in a file at `/etc/X11/xorg.conf.d/99-calibration.conf`, delete whatever is there already, and restart.
 
 
-####Running the GUI on Startup
+#### Running the GUI on Startup
 
 
-####Test the GUI once 
+#### Test the GUI once 
 First, make sure that the Arduino is mounted at the correct devive name, `ACM0`. 
 ``` bash
 $ arduino
