@@ -1,11 +1,21 @@
 AutoDrinkAdmin
 ==============
+## Summary
+
+This README was last updated based on an install on a Rasbperry Pi 3 running Raspbian Stretch, 
+these instructions are not likely to get you up and running out of the box in any other scenario.
 
 The program is started by calling the GUI.py which will start the daemon thread.
 
 ``` bash
 $ python GUI.py
 ```
+
+### Before You Start
+Download the **Raspbian Stretch with Desktop** image from the 
+[official downloads page](https://www.raspberrypi.org/downloads/raspbian/), and copy the image to 
+an SD card using the `dd` tool on Linux or Mac, or [Win32 Disk Imager](https://sourceforge.net/projects/win32diskimager/) 
+on Windows
 
 ## Files:
 - Daemon.py: Runs in the background and takes data from the arduino and GUI to update users' 
@@ -65,7 +75,7 @@ Copy the "Section ... End Section" from the output and put it in a file at `/etc
 
 
 #### Test the GUI once 
-First, make sure that the Arduino is mounted at the correct devive name, `ACM0`. 
+First, make sure that the Arduino is mounted at the correct device name, `ACM0`. 
 ``` bash
 $ arduino
 ```
