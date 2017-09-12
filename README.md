@@ -43,10 +43,9 @@ On rasbian, wxPython is provided by `python-wxgtk3.0` and the others are avaliab
 These commands will install dependencies and other needed tools:
 ``` bash
 $ sudo apt-get install vim ntpdate arduino matchbox-keyboard
-$ sudo apt-get install python-dev libsasl2-dev python-dev libldap2-dev libssl-dev python-wxgtk3.0 libcanberra-gtk-module
+$ sudo apt-get install python-dev libsasl2-dev libldap2-dev libssl-dev python-wxgtk3.0 libcanberra-gtk-module
 $ sudo apt-get install --no-install-recommends packagekit-gtk3-module #gnome and all of its tools are reccomened 
-$ sudo svstemctl disable ntpd && sudo systemctl stop ntpd
-$ sudo ntpdate 
+$ sudo ntpdate ntp.rit.edu
 $ sudo pip install --upgrade python-ldap configParser pyserial requests
 ```
 
@@ -61,7 +60,7 @@ Clone xinput_calibrator and build. Only use 3 cores because it doesn't take that
 ```bash
 $ git clone https://github.com/tias/xinput_calibrator.git
 $ cd xinput_calibrator
-$ ./autoconf.sh
+$ ./autogen.sh
 $ make -j3 
 $ sudo make install
 $ DISPLAY=:0.0 xinput_calibrator
@@ -70,16 +69,27 @@ $ DISPLAY=:0.0 xinput_calibrator
 
 Copy the "Section ... End Section" from the output and put it in a file at `/etc/X11/xorg.conf.d/99-calibration.conf`, delete whatever is there already, and restart.
 
+##### Troubleshooting:
+**On the most recent setup of AutoDrinkAdmin (Raspbain stretch) using the most recent version of `xinput_calibrator`, 
+the calibration rules seem to be loaded by X after it loads the device driver, but they're not actually applied.**
+This problem is a real sticky one, and the only real solution we managed to find was running
+```bash
+$ xinput <touchscreen_id> <coordinate_transformation_matrix_id> -1 0 1 0 1 0 0 0 1
+```
+replacing `<touchscreen_id>` with the id of the touchscreen as shown by the command `xinput list` and `<coordinate_transformation_matrix_id>` with the id of the 
+coordinate transformation matrix prop id as shown by `xinput list-props <touchscreen_id>`
 
-#### Running the GUI on Startup
-
+This doesn't get us a perfect calibration, but it at least gets the machine in a usable state
 
 #### Test the GUI once 
 First, make sure that the Arduino is mounted at the correct device name, `ACM0`. 
 ``` bash
 $ arduino
 ```
+Check through the devices menu to ensure that the arduino mega is at `ACM0`
+If all is well, run
 
+```bash
 $ cd AutoDrinkAdmin
 $ ./launcher
 ```
